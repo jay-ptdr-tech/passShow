@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer"
+    />
+    <title>password show strength</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        font-family: 'Trebuchet MS', sans-serif;
+        box-sizing: border-box;
+    }
+    
+     :root {
+        --primary-color: #222123;
+        --secondary-color: #fff;
+        --border-color: #ccc;
+    }
+    
+    .light-theme {
+        --primary-color: #fff;
+        --secondary-color: #222123;
+        --border-color: #343232;
+    }
+    
+    .container {
+        height: 100vh;
+        width: 100%;
+        background: var(--primary-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    
+    #mode-btn {
+        position: absolute;
+        top: 30px;
+        left: -15px;
+        border: 2px solid var(--border-color);
+        padding: 10px;
+        border-radius: 50px;
+        margin-left: 50px;
+        cursor: pointer;
+        color: var(--secondary-color);
+        font-size: larger;
+    }
+    
+    #input-box {
+        width: 300px;
+        max-width: 90%;
+        position: relative;
+    }
+    
+    #input-box input {
+        width: 100%;
+        height: 37px;
+        padding: 0 20px;
+        border: 1.4px solid var(--border-color);
+        outline: none;
+        color: var(--secondary-color);
+        background: transparent;
+    }
+    
+    a {
+        background: transparent;
+        border-radius: 100px;
+        font-size: large;
+        cursor: pointer;
+        position: absolute;
+        top: 8px;
+        /* top: 50px; */
+        left: 270px;
+        color: var(--secondary-color);
+    }
+    
+    a i {
+        color: var(--secondary-color);
+    }
+    
+    #message {
+        color: var(--secondary-color);
+        /* top: 5px; */
+        padding-top: 5px;
+        font-size: 12px;
+        display: none;
+    }
+    
+     ::placeholder {
+        color: var(--secondary-color);
+    }
+    
+    .sec-con {
+        margin-top: 20px;
+        text-align: center;
+    }
+    
+    .sub-btn {
+        width: 100px;
+        padding: 5px 0px;
+        border: none;
+        border-radius: 10px;
+        background: var(--secondary-color);
+        color: var(--primary-color);
+        cursor: pointer;
+    }
+    
+    img {
+        width: 100px;
+        margin-top: -50px;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    
+    .popup {
+        width: 400px;
+        background-color: var(--secondary-color);
+        border-radius: 6px;
+        position: absolute;
+        top: 0%;
+        /* left: 32%; */
+        transform: translate(-35%, -50%) scale(0.1);
+        visibility: hidden;
+        transition: transforn 0.5s, top 0.5s;
+    }
+    
+    .open-pop {
+        visibility: visible;
+        top: 50%;
+        transform: translate(-35%, -50%) scale(1);
+    }
+    
+    .popup h2 {
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+    
+    .popup p {
+        font-size: 12px;
+        color: var(--primary-color);
+    }
+    
+    .popup button {
+        margin: 20px;
+        padding: 5px;
+        width: 70px;
+        border: 1px solid var(--border-color);
+        /* border: none; */
+        font-size: larger;
+        background: greenyellow;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
+<body>
+
+    <div class="container">
+        <!-- <i class="fa-regular fa-moon"></i> -->
+        <div id="input-box">
+            <input type="password" id="pass" placeholder="password">
+            <a id="btn"><i class="fa-solid fa-eye-low-vision" id="eyeicon"></i></a>
+            <p id="message">password is
+                <span id="strength"></span>
+            </p>
+        </div>
+        <div class="sec-con">
+            <button type="submit" class="sub-btn" onclick="openPopup()">submit</button>
+            <div class="popup" id="popup">
+                <img src="check.png" alt="">
+                <h2>thank you!</h2>
+                <p>your details has been successfully submitted. thankss!</p>
+                <button type="button" onclick="closePopup()">ok</button>
+            </div>
+        </div>
+
+    </div>
+    <div id="mode-btn"><i class="fa-regular fa-moon" id="icon"></i>
+        <div>
+
+</body>
+<script>
+    var pass = document.querySelector("#pass");
+    var msg = document.querySelector("#message");
+    var str = document.getElementById("strength");
+    var btn = document.getElementById("btn");
+    var eyeicon = document.getElementById("eyeicon");
+    var icon = document.getElementById("icon");
+    var popup = document.getElementById("popup");
+
+
+
+    pass.addEventListener("input", () => {
+        if (pass.value.length > 0) {
+            msg.style.display = "block";
+        } else {
+            msg.style.display = "none";
+        }
+        if (pass.value.length < 4) {
+            str.innerHTML = "weak";
+            pass.style.borderColor = "red";
+            msg.style.color = "red";
+            btn.style.color = "red";
+
+        } else if (pass.value.length >= 4 && pass.value.length < 8) {
+            str.innerHTML = "medium";
+            pass.style.borderColor = "yellow";
+            msg.style.color = "yellow";
+            btn.style.color = "yellow";
+
+
+
+        } else if (pass.value.length >= 8) {
+            str.innerHTML = "strong";
+            pass.style.borderColor = "green";
+            msg.style.color = "green";
+            btn.style.color = "green";
+
+        }
+    })
+    eyeicon.onclick = function() {
+        if (pass.type == "password") {
+            pass.type = "text";
+            eyeicon.className = 'fa-regular fa-eye';
+        } else {
+            pass.type = "password";
+            eyeicon.className = 'fa-solid fa-eye-low-vision';
+        }
+    }
+    icon.onclick = function() {
+        document.body.classList.toggle("light-theme");
+        if (document.body.classList.contains("light-theme")) {
+            icon.className = 'fa-regular fa-sun'
+        } else {
+            icon.className = 'fa-regular fa-moon';
+        }
+    }
+
+    function openPopup() {
+        popup.classList.add("open-pop");
+    }
+
+    function closePopup() {
+        popup.classList.remove("open-pop");
+    }
+</script>
+
+</html>
